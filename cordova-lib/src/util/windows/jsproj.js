@@ -25,7 +25,7 @@ var xml_helpers = require('../../util/xml-helpers'),
     et = require('elementtree'),
     fs = require('fs'),
     shell = require('shelljs'),
-    events = require('../events'),
+    events = require('../../events'),
     path = require('path');
 
 var WindowsStoreProjectTypeGUID = "{BC8A1FFA-BEE3-4634-8014-F334798102B3}";  // any of the below, subtype
@@ -121,19 +121,28 @@ jsproj.prototype = {
         this.xml.getroot().append(item);
     },
 
-    removeSourceFile:function(relative_path) {
+    removeSourceFile: function(relative_path) {
 
-        // path.normalize(relative_path);// ??
-        relative_path = relative_path.split('/').join('\\');
+        var isRegexp = relative_path instanceof RegExp;
+
+        if (!isRegexp) {
+            // path.normalize(relative_path);// ??
+            relative_path = relative_path.split('/').join('\\');
+        }
+
+        var isFileMatched = function(src) {
+            return isRegexp ? src.match(relative_path) :
+                src == relative_path;
+        }
+
         // var oneStep = this.xml.findall('ItemGroup/Content[@Include="' + relative_path + '""]/..');
-
         var item_groups = this.xml.findall('ItemGroup');
         for (var i = 0, l = item_groups.length; i < l; i++) {
             var group = item_groups[i];
             var files = group.findall('Content');
             for (var j = 0, k = files.length; j < k; j++) {
                 var file = files[j];
-                if (file.attrib.Include == relative_path) {
+                if (isFileMatched(file.attrib.Include)) {
                     // remove file reference
                     group.remove(0, file);
                     // remove ItemGroup if empty
@@ -141,12 +150,11 @@ jsproj.prototype = {
                     if(new_group.length < 1) {
                         this.xml.getroot().remove(0, group);
                     }
-                    return true;
                 }
             }
         }
-        return false;
     },
+
     // relative path must include the project file, so we can determine .csproj, .jsproj, .vcxproj...
     addProjectReference:function(relative_path) {
         events.emit('verbose','adding project reference to ' + relative_path);

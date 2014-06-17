@@ -21,8 +21,8 @@ var common = require('./common'),
     path = require('path'),
     glob = require('glob'),
     fs = require('fs'),
-    csproj = require('../util/csproj'),
-    events = require('../events'),
+    csproj = require('../../util/windows/csproj'),
+    events = require('../../events'),
     xml_helpers = require('../../util/xml-helpers');
 
 module.exports = {
