@@ -22,7 +22,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/pq1k924ieagm67aa)](https://ci.appveyor.com/project/sgrebnov/cordova-lib)
 # cordova-lib
 Contains npm modules used primarily by [cordova](https://github.com/apache/cordova-cli/) and [plugman](https://github.com/apache/cordova-plugman/).
-
+ 
 ## Setup
 * Clone this repository onto your local machine. 
     `git clone https://git-wip-us.apache.org/repos/asf/cordova-lib.git`
